@@ -10,6 +10,18 @@
 - Thống kê doanh thu và bán hàng
 - Học tập và thực hành kỹ năng Full-stack Development
 
+### 1.4. Mô tả bài toán chi tiết (Scenario)
+
+*Dưới đây là mô tả chi tiết về hoạt động của hệ thống, được dùng làm đầu vào duy nhất cho quá trình phân tích.*
+
+**"Hệ thống DNU Shop là một nền tảng thương mại điện tử chuyên cung cấp các thiết bị công nghệ. Hệ thống có 2 nhóm người dùng chính: Khách hàng (Customer) và Quản trị viên (Admin). Tất cả người dùng đều có thông tin cơ bản gồm Họ tên, Email (duy nhất) và Mật khẩu (đã được mã hóa).**
+
+**Đối với SẢN PHẨM (Product): Mỗi sản phẩm được bày bán đều thuộc về một Danh mục (Category) cụ thể (ví dụ: Điện thoại, Laptop). Sản phẩm cần lưu trữ các thông tin chi tiết gồm: Tên sản phẩm, Giá bán hiện tại, Hình ảnh minh họa, Mô tả kỹ thuật và Số lượng tồn kho. Một danh mục có thể chứa nhiều sản phẩm, nhưng mỗi sản phẩm chỉ thuộc một danh mục.**
+
+**Quy trình MUA HÀNG (Ordering): Khách hàng sau khi đăng nhập có thể chọn mua nhiều sản phẩm. Khi khách hàng quyết định 'Đặt hàng', hệ thống sẽ tạo ra một Đơn hàng (Order). Một Đơn hàng phải chứa thông tin về: Ngày đặt hàng, Tổng tiền thanh toán, Tên người nhận, SĐT người nhận và Địa chỉ giao hàng. Đặc biệt, một đơn hàng bao gồm nhiều dòng sản phẩm, mỗi dòng được gọi là Chi tiết đơn hàng (OrderDetail). Mỗi Chi tiết đơn hàng ghi nhận lại Sản phẩm nào được mua, Số lượng bao nhiêu và Giá bán tại thời điểm mua (để lưu vết lịch sử giá nếu giá gốc thay đổi).**
+
+**Quy trình QUẢN LÝ (Management): Quản trị viên cần theo dõi trạng thái của Đơn hàng. Một đơn hàng sẽ có các trạng thái chuyển đổi tuần tự: Mới (New) -> Đang giao (Shipping) -> Hoàn thành (Completed) hoặc bị Hủy (Cancelled). Quản trị viên cũng quản lý kho hàng bằng cách cập nhật Số lượng tồn kho của sản phẩm."**
+
 ### 1.2. Phạm vi dự án
 
 **Trong phạm vi:**

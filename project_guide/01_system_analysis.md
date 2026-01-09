@@ -1,393 +1,187 @@
-# 🔍 PHÂN TÍCH HỆ THỐNG DNU SHOP
+# 🔍 PHÂN TÍCH HỆ THỐNG DNU SHOP (COMPLETE GUIDE)
 
-## 🎯 1. Tổng quan dự án
+## 1. Phát biểu bài toán (Detailed Scenario)
 
-### 1.1. Mục đích
+*Dưới đây là mô tả chi tiết về hoạt động của hệ thống, được dùng làm đầu vào duy nhất cho quá trình phân tích.*
 
-**DNU Shop** là hệ thống thương mại điện tử (E-commerce) được xây dựng để:
-- Phục vụ nhu cầu mua sắm trực tuyến của khách hàng
-- Quản lý kho hàng và đơn hàng cho admin
-- Thống kê doanh thu và bán hàng
-- Học tập và thực hành kỹ năng Full-stack Development
+**"Hệ thống DNU Shop là một nền tảng thương mại điện tử chuyên cung cấp các thiết bị công nghệ. Hệ thống có 2 nhóm người dùng chính: Khách hàng (Customer) và Quản trị viên (Admin). Tất cả người dùng đều có thông tin cơ bản gồm Họ tên, Email (duy nhất) và Mật khẩu (đã được mã hóa).**
 
-### 1.2. Phạm vi dự án
+**Đối với SẢN PHẨM (Product): Mỗi sản phẩm được bày bán đều thuộc về một Danh mục (Category) cụ thể (ví dụ: Điện thoại, Laptop). Sản phẩm cần lưu trữ các thông tin chi tiết gồm: Tên sản phẩm, Giá bán hiện tại, Hình ảnh minh họa, Mô tả kỹ thuật và Số lượng tồn kho. Một danh mục có thể chứa nhiều sản phẩm, nhưng mỗi sản phẩm chỉ thuộc một danh mục.**
 
-**Trong phạm vi:**
-- ✅ Quản lý sản phẩm (CRUD)
-- ✅ Quản lý đơn hàng
-- ✅ Quản lý người dùng và phân quyền
-- ✅ Giỏ hàng và checkout
-- ✅ Dashboard thống kê
-- ✅ Upload ảnh sản phẩm
+**Quy trình MUA HÀNG (Ordering): Khách hàng sau khi đăng nhập có thể chọn mua nhiều sản phẩm. Khi khách hàng quyết định 'Đặt hàng', hệ thống sẽ tạo ra một Đơn hàng (Order). Một Đơn hàng phải chứa thông tin về: Ngày đặt hàng, Tổng tiền thanh toán, Tên người nhận, SĐT người nhận và Địa chỉ giao hàng. Đặc biệt, một đơn hàng bao gồm nhiều dòng sản phẩm, mỗi dòng được gọi là Chi tiết đơn hàng (OrderDetail). Mỗi Chi tiết đơn hàng ghi nhận lại Sản phẩm nào được mua, Số lượng bao nhiêu và Giá bán tại thời điểm mua (để lưu vết lịch sử giá nếu giá gốc thay đổi).**
 
-**Ngoài phạm vi (có thể mở rộng sau):**
-- ❌ Thanh toán trực tuyến (Payment Gateway)
-- ❌ Gửi email xác nhận
-- ❌ Đánh giá sản phẩm
-- ❌ Mã giảm giá (Coupon)
-- ❌ Quản lý kho hàng nâng cao (Inventory Management)
-
-### 1.3. Đối tượng sử dụng
-
-**1. Khách hàng (Customer/User)**
-- Xem danh sách sản phẩm
-- Tìm kiếm và lọc sản phẩm
-- Xem chi tiết sản phẩm
-- Thêm vào giỏ hàng
-- Đặt hàng
-
-**2. Quản trị viên (Admin)**
-- Đăng nhập vào hệ thống
-- Quản lý sản phẩm (thêm, sửa, xóa)
-- Quản lý đơn hàng (xem, cập nhật trạng thái)
-- Xem dashboard thống kê
-- Upload ảnh sản phẩm
+**Quy trình QUẢN LÝ (Management): Quản trị viên cần theo dõi trạng thái của Đơn hàng. Một đơn hàng sẽ có các trạng thái chuyển đổi tuần tự: Mới (New) -> Đang giao (Shipping) -> Hoàn thành (Completed) hoặc bị Hủy (Cancelled). Quản trị viên cũng quản lý kho hàng bằng cách cập nhật Số lượng tồn kho của sản phẩm."**
 
 ---
 
-## 🏗️ 2. Phân tích chức năng (Functional Analysis)
+## 2. Phương pháp Phân tích (Analysis Methodology)
 
-### 2.1. Phân hệ Khách hàng (Storefront)
+Quy trình chuyển đổi từ **Scenario** sang **Thiết kế** gồm 3 bước:
 
-#### 2.1.1. Xem danh sách sản phẩm
+1.  **Phân tích Danh từ (Noun Analysis)** $\to$ Xác định **Entities** (Thực thể) và **Attributes** (Thuộc tính).
+2.  **Phân tích Động từ (Verb Analysis)** $\to$ Xác định **Relationships** (Quan hệ) và **Methods** (Phương thức).
+3.  **Mô hình hóa (Modeling)** $\to$ Vẽ **Class Diagram** và **ERD**.
 
-**Mô tả:**
-- Hiển thị danh sách sản phẩm dạng lưới (grid)
-- Mỗi sản phẩm hiển thị: ảnh, tên, giá
-- Phân trang: 10 sản phẩm/trang
-- Sắp xếp: Mặc định, Giá tăng dần, Giá giảm dần, Mới nhất
+### 2.1. Bước 1: Phân tích Danh từ (Noun Analysis)
 
-**Input:**
-- Trang hiện tại (page)
-- Số sản phẩm/trang (pageSize = 10)
-- Tiêu chí sắp xếp (sortBy)
+*Liệt kê TOÀN BỘ danh từ xuất hiện trong Scenario và phân loại.*
 
-**Output:**
-- Danh sách sản phẩm
-- Tổng số sản phẩm
-- Tổng số trang
+| Danh từ (Trong văn bản) | Phân loại | Giải thích / Ánh xạ |
+| :--- | :--- | :--- |
+| **Hệ thống DNU Shop** | Bỏ qua | Phạm vi hệ thống, không phải đối tượng dữ liệu. |
+| **Khách hàng (Customer)** | `Role` / `User` | Là một loại người dùng. Ánh xạ vào entity **User** (với Role='Customer'). |
+| **Quản trị viên (Admin)** | `Role` / `User` | Là một loại người dùng. Ánh xạ vào entity **User** (với Role='Admin'). |
+| **Người dùng** | **Entity** | Thực thể cha, quản lý thông tin đăng nhập chung. $\to$ Table `AspNetUsers` |
+| **Họ tên, Email, Mật khẩu** | **Attribute** | Thuộc tính của `User`. |
+| **Sản phẩm (Product)** | **Entity** | Đối tượng hàng hóa. $\to$ Table `Products` |
+| **Danh mục (Category)** | **Entity** | Đối tượng phân loại. $\to$ Table `Categories` |
+| **Tên SP, Giá, Hình ảnh, Mô tả, Tồn kho** | **Attribute** | Thuộc tính của `Product`. |
+| **Đơn hàng (Order)** | **Entity** | Đối tượng giao dịch chính. $\to$ Table `Orders` |
+| **Ngày đặt, Tổng tiền** | **Attribute** | Thuộc tính của `Order`. |
+| **Tên người nhận, SĐT, Địa chỉ** | **Attribute** | Thuộc tính của `Order` (Thông tin giao hàng). |
+| **Chi tiết đơn hàng (OrderDetail)** | **Entity** | Đối tượng trung gian (Order-Product). $\to$ Table `OrderItems` |
+| **Số lượng (mua)** | **Attribute** | Thuộc tính của `OrderDetail`. |
+| **Giá bán (tại thời điểm mua)** | **Attribute** | Thuộc tính của `OrderDetail` (Lưu ý: Khác với giá hiện tại của SP). |
+| **Trạng thái (Status)** | **Attribute** | Thuộc tính của `Order` (New, Shipping... ). |
 
-**Business Rules:**
-- Chỉ hiển thị sản phẩm còn hàng (Stock > 0)
-- Chỉ hiển thị sản phẩm chưa bị xóa (IsDeleted = false)
-
-#### 2.1.2. Tìm kiếm sản phẩm
-
-**Mô tả:**
-- Tìm kiếm theo tên sản phẩm
-- Tìm kiếm real-time (khi user gõ)
-- Hiển thị kết quả ngay lập tức
-
-**Input:**
-- Từ khóa tìm kiếm (keyword)
-
-**Output:**
-- Danh sách sản phẩm khớp với từ khóa
-
-**Business Rules:**
-- Tìm kiếm không phân biệt hoa thường
-- Tìm kiếm trong tên sản phẩm và mô tả
-- Nếu không có kết quả, hiển thị "Không tìm thấy sản phẩm"
-
-#### 2.1.3. Lọc sản phẩm
-
-**Mô tả:**
-- Lọc theo danh mục (Category)
-- Lọc theo khoảng giá (Min Price - Max Price)
-- Có thể kết hợp nhiều bộ lọc
-
-**Input:**
-- CategoryId (optional)
-- MinPrice (optional)
-- MaxPrice (optional)
-
-**Output:**
-- Danh sách sản phẩm sau khi lọc
-
-**Business Rules:**
-- Nếu không chọn bộ lọc nào → Hiển thị tất cả
-- MinPrice phải < MaxPrice
-- Giá phải >= 0
-
-#### 2.1.4. Xem chi tiết sản phẩm
-
-**Mô tả:**
-- Hiển thị ảnh lớn của sản phẩm
-- Hiển thị tên, mô tả, giá
-- Hiển thị số lượng tồn kho
-- Nút "Thêm vào giỏ hàng"
-
-**Input:**
-- ProductId
-
-**Output:**
-- Thông tin chi tiết sản phẩm
-
-**Business Rules:**
-- Nếu sản phẩm không tồn tại → 404 Not Found
-- Nếu hết hàng → Disable nút "Thêm vào giỏ"
-
-#### 2.1.5. Giỏ hàng (Shopping Cart)
-
-**Mô tả:**
-- Thêm sản phẩm vào giỏ hàng
-- Xem danh sách sản phẩm trong giỏ
-- Cập nhật số lượng
-- Xóa sản phẩm khỏi giỏ
-- Tính tổng tiền tự động
-
-**Input:**
-- ProductId
-- Quantity
-
-**Output:**
-- Danh sách sản phẩm trong giỏ
-- Tổng tiền
-
-**Business Rules:**
-- Số lượng phải > 0
-- Số lượng không được vượt quá tồn kho
-- Giỏ hàng lưu trong localStorage (chưa đăng nhập) hoặc database (đã đăng nhập)
-
-#### 2.1.6. Đặt hàng (Checkout)
-
-**Mô tả:**
-- Nhập thông tin giao hàng: Tên, SĐT, Địa chỉ
-- Xác nhận đơn hàng
-- Lưu đơn hàng vào database
-
-**Input:**
-- Thông tin giao hàng
-- Danh sách sản phẩm trong giỏ
-
-**Output:**
-- Mã đơn hàng (OrderId)
-- Thông báo đặt hàng thành công
-
-**Business Rules:**
-- Tất cả thông tin là bắt buộc
-- SĐT phải đúng format (10-11 số)
-- Địa chỉ không được để trống
-- Sau khi đặt hàng → Xóa giỏ hàng
+**👉 KẾT QUẢ BƯỚC 1: Danh sách Thực thể (Entities)**
+1.  **User** (Người dùng)
+2.  **Product** (Sản phẩm)
+3.  **Category** (Danh mục)
+4.  **Order** (Đơn hàng)
+5.  **OrderDetail** (Chi tiết đơn hàng)
 
 ---
 
-### 2.2. Phân hệ Quản trị (Admin Portal)
+### 2.2. Bước 2: Phân tích Động từ (Verb Analysis)
 
-#### 2.2.1. Đăng nhập
+*Xác định mối quan hệ giữa các thực thể dựa trên hành động.*
 
-**Mô tả:**
-- Chỉ Admin mới được đăng nhập
-- Xác thực bằng Email và Password
-- Nhận JWT token sau khi đăng nhập thành công
-
-**Input:**
-- Email
-- Password
-
-**Output:**
-- JWT Token
-- Thông tin user (Email, FullName, Role)
-
-**Business Rules:**
-- Email phải tồn tại trong hệ thống
-- Password phải đúng
-- User phải có role "Admin"
-- Token có thời hạn 1 giờ
-
-#### 2.2.2. Dashboard
-
-**Mô tả:**
-- Hiển thị tổng doanh thu tháng này
-- Hiển thị số đơn hàng mới chưa duyệt
-- Hiển thị Top 5 sản phẩm bán chạy
-- Biểu đồ doanh thu theo tháng
-
-**Input:**
-- Tháng hiện tại
-- Năm hiện tại
-
-**Output:**
-- Tổng doanh thu
-- Số đơn hàng mới
-- Top 5 sản phẩm
-- Dữ liệu biểu đồ
-
-**Business Rules:**
-- Chỉ tính đơn hàng đã hoàn thành (Status = Completed)
-- Đơn hàng mới = Status = New
-
-#### 2.2.3. Quản lý Sản phẩm
-
-**Mô tả:**
-- Xem danh sách sản phẩm dạng bảng
-- Thêm sản phẩm mới (có upload ảnh)
-- Sửa thông tin sản phẩm
-- Xóa sản phẩm (soft delete)
-
-**Input:**
-- Thông tin sản phẩm (Name, Price, Description, CategoryId, Stock)
-- File ảnh (JPG, PNG, tối đa 5MB)
-
-**Output:**
-- Danh sách sản phẩm
-- Thông báo thành công/thất bại
-
-**Business Rules:**
-- Tên sản phẩm không được trùng
-- Giá phải >= 0
-- Stock phải >= 0
-- Ảnh phải là JPG/PNG, tối đa 5MB
-- Xóa mềm (IsDeleted = true), không xóa thật
-
-#### 2.2.4. Quản lý Đơn hàng
-
-**Mô tả:**
-- Xem danh sách tất cả đơn hàng
-- Xem chi tiết đơn hàng
-- Cập nhật trạng thái: Mới → Đang giao → Hoàn thành / Hủy
-
-**Input:**
-- OrderId
-- Status mới
-
-**Output:**
-- Danh sách đơn hàng
-- Thông báo cập nhật thành công
-
-**Business Rules:**
-- Chỉ có thể cập nhật trạng thái theo thứ tự:
-  - New → Shipping → Completed
-  - New → Cancelled
-- Không thể quay lại trạng thái cũ
-- Đơn hàng đã Completed hoặc Cancelled không thể thay đổi
+| Động từ / Mối quan hệ | Phân tích quan hệ (Cardinality) | Phương thức (Methods) |
+| :--- | :--- | :--- |
+| Sản phẩm **thuộc về** Danh mục | **Category (1) -- (n) Product** <br> *(1 Danh mục có nhiều SP, 1 SP thuộc 1 Danh mục)* | `GetProductsByCategory(cateId)` |
+| Khách hàng **quyết định / tạo** Đơn hàng | **User (1) -- (n) Order** <br> *(1 Khách có nhiều đơn, 1 Đơn thuộc 1 Khách)* | `CreateOrder(userId, cartData)` |
+| Đơn hàng **bao gồm** Chi tiết | **Order (1) -- (n) OrderDetail** <br> *(1 Đơn có nhiều dòng chi tiết)* | `GetOrderDetails(orderId)` |
+| Chi tiết **ghi nhận** Sản phẩm | **Product (1) -- (n) OrderDetail** <br> *(1 SP xuất hiện trong nhiều đơn khác nhau)* | `GetProductSalesHistory(productId)` |
+| Quản trị viên **cập nhật** Tồn kho | Tác động lên thuộc tính `Stock` của Product | `UpdateStock(productId, newQuantity)` |
+| Quản trị viên **chuyển trạng thái** Đơn hàng | Tác động lên thuộc tính `Status` của Order | `UpdateOrderStatus(orderId, newStatus)` |
 
 ---
 
-## 🔒 3. Phân tích phi chức năng (Non-Functional Analysis)
+## 3. Thiết kế Hệ thống (System Design)
 
-### 3.1. Hiệu năng (Performance)
+### 3.1. Biểu đồ Lớp (Class Diagram)
 
-**Yêu cầu:**
-- Tải trang dưới 2 giây
-- API response time < 500ms
-- Hỗ trợ 100 concurrent users
+*Biểu đồ này được suy ra TRỰC TIẾP từ kết quả phân tích Danh từ (Entities/Attributes) và Động từ (Relationships/Methods) ở trên.*
 
-**Giải pháp:**
-- Code splitting, lazy loading
-- Database indexing
-- Caching static assets
-- Pagination cho danh sách lớn
+```mermaid
+classDiagram
+    %% Entities
+    class User {
+        +String Id
+        +String FullName
+        +String Email
+        +String PasswordHash
+        +Role Enum
+        +Login()
+        +Register()
+    }
 
-### 3.2. Bảo mật (Security)
+    class Category {
+        +Integer Id
+        +String Name
+        +String Description
+    }
 
-**Yêu cầu:**
-- Password phải được hash (bcrypt)
-- API phải có JWT authentication
-- Chỉ Admin mới vào được Admin Portal
-- XSS và SQL Injection protection
+    class Product {
+        +Integer Id
+        +String Name
+        +Decimal Price
+        +String ImageUrl
+        +String Description
+        +Integer Stock
+        +UpdateStock()
+    }
 
-**Giải pháp:**
-- ASP.NET Core Identity (password hashing)
-- JWT token authentication
-- Role-based authorization
-- Input validation và sanitization
+    class Order {
+        +Integer Id
+        +DateTime CreatedDate
+        +Decimal TotalAmount
+        +String ShippingAddress
+        +String ShippingPhone
+        +OrderStatus Status
+        +UpdateStatus()
+    }
 
-### 3.3. Khả năng mở rộng (Scalability)
+    class OrderDetail {
+        +Integer Id
+        +Integer Quantity
+        +Decimal UnitPrice
+        +Decimal Subtotal
+    }
 
-**Yêu cầu:**
-- Có thể mở rộng thêm tính năng
-- Code dễ maintain
+    %% Relationships
+    Category "1" -- "0..*" Product : Contains >
+    User "1" -- "0..*" Order : Places >
+    Order "1" -- "1..*" OrderDetail : Has >
+    Product "1" -- "0..*" OrderDetail : Included in >
+```
 
-**Giải pháp:**
-- Clean Architecture
-- Separation of Concerns
-- DTO pattern
-- Service pattern
+### 3.2. Lược đồ Cơ sở dữ liệu (Database Schema)
 
-### 3.4. Giao diện (UI/UX)
+*Chuyển đổi từ Class Diagram sang ERD (Entity Relationship Diagram) vật lý.
+Lưu ý: Bảng `User` sẽ mapping với `AspNetUsers` của Identity Framework.*
 
-**Yêu cầu:**
-- Responsive (hoạt động tốt trên mobile)
-- Giao diện đẹp, dễ sử dụng
-- Loading states và error handling
+```mermaid
+erDiagram
+    AspNetUsers ||--o{ Orders : "1 User has many Orders"
+    Categories ||--o{ Products : "1 Category has many Products"
+    Products ||--o{ OrderItems : "1 Product in many OrderItems"
+    Orders ||--o{ OrderItems : "1 Order has many OrderItems"
 
-**Giải pháp:**
-- Vuetify (Material Design)
-- Responsive breakpoints
-- Loading spinners
-- Error messages rõ ràng
+    AspNetUsers {
+        string Id PK "UUID"
+        string Email "Unique"
+        string PasswordHash
+        string FullName
+    }
 
----
+    Categories {
+        int Id PK
+        string Name
+    }
 
-## 📊 4. Use Cases
+    Products {
+        int Id PK
+        string Name
+        decimal Price
+        int Stock
+        int CategoryId FK
+    }
 
-### 4.1. Use Case: Khách hàng mua sản phẩm
+    Orders {
+        int Id PK
+        string UserId FK
+        datetime CreatedDate
+        decimal TotalAmount
+        int Status "Enum: New, Shipping, Done, Cancelled"
+        string ShippingAddress
+    }
 
-**Actor:** Khách hàng
+    OrderItems {
+        int Id PK
+        int OrderId FK
+        int ProductId FK
+        int Quantity
+        decimal UnitPrice "Snapshot Price"
+    }
+```
 
-**Preconditions:**
-- Khách hàng đang ở trang chủ
-- Có sản phẩm trong hệ thống
+## 4. Tổng kết
 
-**Main Flow:**
-1. Khách hàng xem danh sách sản phẩm
-2. Khách hàng tìm kiếm hoặc lọc sản phẩm
-3. Khách hàng click vào sản phẩm để xem chi tiết
-4. Khách hàng click "Thêm vào giỏ hàng"
-5. Khách hàng xem giỏ hàng
-6. Khách hàng click "Đặt hàng"
-7. Khách hàng nhập thông tin giao hàng
-8. Khách hàng xác nhận đặt hàng
-9. Hệ thống lưu đơn hàng và hiển thị mã đơn hàng
+Quy trình phân tích từ văn bản đến thiết kế CSDL đã hoàn tất:
+1.  **Input**: Scenario chi tiết (Mục 1).
+2.  **Analysis**: Bảng Danh từ & Động từ (Mục 2).
+3.  **Output**: Class Diagram & ERD (Mục 3).
 
-**Postconditions:**
-- Đơn hàng được tạo thành công
-- Giỏ hàng được xóa
-
-**Alternative Flows:**
-- 4a. Sản phẩm hết hàng → Hiển thị thông báo "Hết hàng"
-- 6a. Giỏ hàng trống → Hiển thị thông báo "Giỏ hàng trống"
-- 7a. Thông tin không hợp lệ → Hiển thị lỗi validation
-
-### 4.2. Use Case: Admin quản lý sản phẩm
-
-**Actor:** Admin
-
-**Preconditions:**
-- Admin đã đăng nhập
-
-**Main Flow:**
-1. Admin vào trang "Quản lý Sản phẩm"
-2. Admin xem danh sách sản phẩm
-3. Admin click "Thêm mới"
-4. Admin nhập thông tin sản phẩm và chọn ảnh
-5. Admin click "Lưu"
-6. Hệ thống validate và lưu sản phẩm
-7. Hệ thống hiển thị thông báo thành công
-
-**Postconditions:**
-- Sản phẩm mới được thêm vào database
-- Ảnh được upload lên server
-
-**Alternative Flows:**
-- 4a. Ảnh quá lớn → Hiển thị lỗi "File quá lớn"
-- 4b. Ảnh không đúng format → Hiển thị lỗi "Chỉ chấp nhận JPG/PNG"
-- 6a. Validation lỗi → Hiển thị lỗi validation
-
----
-
-## 🎯 5. Kết luận
-
-Dự án **DNU Shop** là một hệ thống E-commerce hoàn chỉnh với đầy đủ các tính năng cơ bản:
-- ✅ Quản lý sản phẩm
-- ✅ Quản lý đơn hàng
-- ✅ Phân quyền Admin/User
-- ✅ Dashboard thống kê
-
-Hệ thống được thiết kế để:
-- Dễ học và thực hành
-- Có thể mở rộng thêm tính năng
-- Tuân theo best practices
-- Sẵn sàng cho production
-
+Các bước tiếp theo (Coding) sẽ bám sát vào các model này để đảm bảo đúng yêu cầu nghiệp vụ.
