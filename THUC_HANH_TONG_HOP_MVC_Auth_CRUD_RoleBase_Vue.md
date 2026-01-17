@@ -532,6 +532,112 @@ public class BooksController : ControllerBase
 
 ---
 
+## 🧪 PHẦN 2.5: KIỂM THỬ API BẰNG POSTMAN (CHI TIẾT)
+
+### 1) Tạo Collection và Environment
+1. Mở Postman → **New** → **Collection** → đặt tên `Library API`.
+2. Tạo **Environment** tên `Local`.
+3. Thêm biến:
+   - `baseUrl` = `https://localhost:5001`
+   - `token` = (để trống)
+
+### 2) Login để lấy token
+**POST** `{{baseUrl}}/api/Auth/login`
+
+**Body (raw JSON):**
+```json
+{
+  "username": "admin",
+  "password": "Admin123!"
+}
+```
+
+**Test script (tab Tests):**
+```javascript
+const json = pm.response.json();
+pm.environment.set("token", json.token);
+```
+
+> Chạy request này xong thì `token` sẽ được lưu cho các request sau.
+
+### 3) Test Categories
+**GET** `{{baseUrl}}/api/Categories` (public)
+
+**POST** `{{baseUrl}}/api/Categories` (Admin)
+Headers:
+- `Authorization: Bearer {{token}}`
+- `Content-Type: application/json`
+
+Body:
+```json
+{
+  "name": "Khoa học dữ liệu",
+  "description": "Data Science"
+}
+```
+
+### 4) Test Books
+**GET** `{{baseUrl}}/api/Books` (Guest chỉ thấy `IsPublic = true`)
+
+**POST** `{{baseUrl}}/api/Books` (Admin/Librarian)
+Headers:
+- `Authorization: Bearer {{token}}`
+- `Content-Type: application/json`
+
+Body:
+```json
+{
+  "title": "Nhập môn AI",
+  "author": "Nguyễn Văn A",
+  "isbn": "978-1111111111",
+  "publishedYear": 2024,
+  "price": 200000,
+  "categoryId": 1,
+  "isPublic": true
+}
+```
+
+**PUT** `{{baseUrl}}/api/Books/1` (Admin/Librarian)
+Headers:
+- `Authorization: Bearer {{token}}`
+- `Content-Type: application/json`
+
+Body:
+```json
+{
+  "title": "Nhập môn AI (Updated)",
+  "author": "Nguyễn Văn A",
+  "isbn": "978-1111111111",
+  "publishedYear": 2024,
+  "price": 220000,
+  "categoryId": 1,
+  "isPublic": true
+}
+```
+
+**DELETE** `{{baseUrl}}/api/Books/1` (chỉ Admin)
+
+### 5) Checklist nhanh
+- [ ] Login OK, token lưu vào environment
+- [ ] GET Categories OK (200)
+- [ ] POST Categories: Admin OK, Librarian 403
+- [ ] POST Books: Admin/Librarian OK
+- [ ] PUT Books: Admin/Librarian OK
+- [ ] DELETE Books: chỉ Admin OK
+
+### 6) Import trực tiếp Postman Collection
+Bạn có thể import file sau vào Postman:
+- `postman/LibraryManagement_API.postman_collection.json`
+
+Cách import:
+1. Mở Postman → **Import**.
+2. Chọn file JSON ở trên.
+3. Tạo Environment `Local` với biến:
+   - `baseUrl` = `https://localhost:5001`
+   - `token` = (để trống, sẽ tự set sau khi login)
+
+---
+
 ## 📋 PHẦN 3: XÂY DỰNG FRONTEND VUE.JS (CHI TIẾT)
 
 ### 3.1. Khởi tạo dự án Vue + Vite

@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "Library API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.environment.set(\"token\", json.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories - Get All",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Categories",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Categories"]
+        }
+      }
+    },
+    {
+      "name": "Categories - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Khoa học dữ liệu\",\n  \"description\": \"Data Science\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Categories",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Categories"]
+        }
+      }
+    },
+    {
+      "name": "Books - Get All",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Books"]
+        }
+      }
+    },
+    {
+      "name": "Books - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Nhập môn AI\",\n  \"author\": \"Nguyễn Văn A\",\n  \"isbn\": \"978-1111111111\",\n  \"publishedYear\": 2024,\n  \"price\": 200000,\n  \"categoryId\": 1,\n  \"isPublic\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Books",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Books"]
+        }
+      }
+    },
+    {
+      "name": "Books - Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Nhập môn AI (Updated)\",\n  \"author\": \"Nguyễn Văn A\",\n  \"isbn\": \"978-1111111111\",\n  \"publishedYear\": 2024,\n  \"price\": 220000,\n  \"categoryId\": 1,\n  \"isPublic\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Books/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Books", "1"]
+        }
+      }
+    },
+    {
+      "name": "Books - Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Books/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "Books", "1"]
+        }
+      }
+    }
+  ]
+}
